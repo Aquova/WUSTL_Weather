@@ -9,6 +9,6 @@ A Twitterbot that tweets the weather
 
 Planned features include:
 
--Daily forcast once per day
+-Changing daily forecast to avoid risk of going over 140 characters
 
 -Including emojis corresponding to weather at the end of message
