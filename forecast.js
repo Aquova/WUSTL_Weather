@@ -1,5 +1,6 @@
-// This is a twitterbot that tweets the current weather conditions of
+// This program tweets the daily forecast once a day for 
 // Washington University in St. Louis
+
 // Bot can be seen at https://twitter.com/WUSTL_Weather
 // Written by Austin Bricker, 2016
 
@@ -20,41 +21,16 @@ var fs = require('fs'),
 var T = new Twit(config);
 
 // Main tweet function
-function tweetWeather(){
+function tweetForecast(){
 	request({url: url, json: true}, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
-			// Get UNIX date from JSON body, convert
-			var date = new Date(body.currently.time * 1000);
-			var hours = date.getHours();
-			if (hours > 12) {
-				half = 'PM'
-				hours = hours - 12
-			}
-			else if (hours == 0) {
-				half = 'AM'
-				hours = hours + 12
-			}
-			else if (hours == 12) {
-				half = 'PM'
-			}			
-			else {
-				half = 'AM'
-			}	
-			var minutes = '0' + date.getMinutes();
-			var time = hours + ':' + minutes.substr(-2);
-			time = time.toString();
-			// Get temp, remove decimal values
-			temp = Math.floor(body.currently.temperature)
-			temp = temp.toString()
-			// Get weather conditions summary
-			summary = body.currently.summary
-			summary = summary.toString()
-			// Get 'feels like' weather
-			feels = Math.floor(body.currently.apparentTemperature)
-			feels = feels.toString()
-			// Combine parts into desired tweet
-			output = 'Hello, it is ' + time + ' ' + half + '. The temperature is ' + 
-				temp + 'ºF (feels like ' + feels + 'ºF) and ' + summary + '. #WUSTLweather'
+			var forecast = body.hourly.summary
+			forecast = forecast.toString()
+			var tempHigh = body.daily.data[0].temperatureMax
+			tempHigh = Math.floor(tempHigh)
+			tempHigh = tempHigh.toString()
+			output = 'Good morning! Today\'s forecast: ' + forecast +
+					' The high will be ' +  tempHigh + 'ºF. #WUSTLweather'
 			// Tweet, report status		
 			T.post('statuses/update', {status: output}, function(err, data, response) {
 				if (err) {
@@ -67,7 +43,6 @@ function tweetWeather(){
 				}
 				
 			});
-			
 		}
 		else {
 			console.log('Something is wrong.');
@@ -77,4 +52,4 @@ function tweetWeather(){
 };
 
 // Call tweet function
-tweetWeather();	
+tweetForecast();	
